@@ -18,5 +18,5 @@ console.log(xml.renderToString(<hello place="world" />));
 
 ```tsx
 import * as React from "https://deno.land/x/jsx4xml/mod.ts";
-console.log(xml.renderToString(<hello place="world" />));
+console.log(React.renderToString(<hello place="world" />));
 ```
