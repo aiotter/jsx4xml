@@ -4,7 +4,7 @@ const proofOfElement = Symbol("Element");
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      [elementName: string]: unknown;
+      [elementName: string]: Record<string, string>;
     }
   }
 }
