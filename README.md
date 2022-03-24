@@ -1,6 +1,6 @@
 # JSX for XML
 
-Another JSX Runtime but for XML, built for Deno!
+Yet another JSX runtime, but for XML, built for Deno!
 
 ## Usage
 
