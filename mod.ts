@@ -99,7 +99,7 @@ export function renderToString(
 
 export function renderWithDeclaration(
   component: Component | FunctionComponent<Props> | Element,
-  declaration: Record<string, string>,
+  declaration?: Record<string, string>,
 ) {
   let declarationString;
   if (declaration === null) {
