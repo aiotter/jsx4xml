@@ -81,6 +81,9 @@ export function createElement(
   props?: Record<string, string> | null,
   ...children: unknown[]
 ): Element {
+  // Children can be nested
+  children = children.flat(Infinity);
+
   if (typeof type === "function") {
     return type({ ...props, children });
   } else if (typeof type === "object") {
