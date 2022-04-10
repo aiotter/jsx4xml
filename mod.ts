@@ -12,7 +12,7 @@ declare global {
 class Element {
   elementName: string | typeof fragment;
   attributes: Record<string, string>;
-  children: Element[];
+  children: (Element | undefined | null)[];
   [proofOfElement]: true;
   constructor(
     elementName: string | typeof fragment,
@@ -26,8 +26,8 @@ class Element {
   }
 
   toString(): string {
-    if (this.elementName === fragment) {
-      return this.children.map((child) => child.toString()).join("");
+    if (this.elementName == fragment) {
+      return this.children.map((child) => child?.toString() ?? "").join("");
     }
 
     let attributesString = Object.entries(this.attributes)
@@ -48,7 +48,7 @@ class Element {
 
     if (this.children.length > 0) {
       return `<${this.elementName}${attributesString}>${
-        this.children.map((child) => child.toString()).join("")
+        this.children.map((child) => child?.toString() ?? "").join("")
       }</${this.elementName}>`;
     } else {
       return `<${this.elementName}${attributesString}/>`;
@@ -73,8 +73,9 @@ export interface Component {
   render(props: Props): Element;
 }
 
-export const Fragment = ({ children }: { children: Element[] }) =>
-  createElement(fragment, null, ...children);
+export const Fragment = (
+  { children }: { children: (Element | undefined | null)[] },
+) => createElement(fragment, null, ...children);
 
 export function createElement(
   type: string | Component | FC<Props> | Element | typeof fragment,
