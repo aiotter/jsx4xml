@@ -61,24 +61,44 @@ function isElement(element: any): element is Element {
   return element[proofOfElement] === true;
 }
 
-interface Props {
+type Props = {
   children?: unknown[];
   [propertyName: string]: unknown;
-}
+} | undefined | null;
 
 export type FunctionComponent<T extends Props> = ((props?: T) => Element);
 export type FC<T extends Props> = FunctionComponent<T>;
 
 export interface Component {
-  render(props: Props): Element;
+  render(props?: Props): Element;
 }
 
 export const Fragment = ({ children }: { children: Element[] }) =>
   createElement(fragment, null, ...children);
 
 export function createElement(
-  type: string | Component | FC<Props> | Element | typeof fragment,
+  type: string,
   props?: Record<string, string> | null,
+  ...children: Element[]
+): Element;
+export function createElement(
+  type: typeof fragment,
+  props?: null,
+  ...children: Element[]
+): Element;
+export function createElement(
+  type: Component | FunctionComponent<Props>,
+  props?: Record<string, unknown>,
+  ...children: unknown[]
+): Element;
+export function createElement(
+  type: Element,
+  props?: null,
+  ...children: never[]
+): Element;
+export function createElement(
+  type: string | Component | FC<Props> | Element | typeof fragment,
+  props?: Record<string, unknown> | null,
   ...children: unknown[]
 ): Element {
   // Children can be nested
@@ -90,7 +110,38 @@ export function createElement(
     if (isElement(type)) return type;
     return type.render({ ...props, children });
   } else {
-    return new Element(type, props ?? {}, children as Element[]);
+    if (props && !Object.values(props).every((v) => typeof v === "string")) {
+      throw new Error("XML value must be a string");
+    }
+    return new Element(
+      type,
+      (props ?? {}) as Record<string, string>,
+      children as Element[],
+    );
+  }
+}
+
+export function jsx(type: string, props?: Record<string, string> | null, key?: string): Element;
+export function jsx(type: Component | FC<Props>, props?: Record<string, unknown> | null, key?: unknown): Element;
+export function jsx(type: Element, props: undefined | null, key: never): Element;
+export function jsx(type: typeof fragment, props: { children: Element[]}, key: never): Element;
+export function jsx(
+  type: string | Component | FC<Props> | Element | typeof fragment,
+  props?: Record<string, unknown> | null,
+  key?: unknown,
+) {
+  if (typeof type === "function") {
+    return type(props);
+  } else if (typeof type === "object") {
+    if (isElement(type)) return type;
+    return type.render(props);
+  } else {
+    const { children = [], ..._props } = props ?? {};
+    return new Element(
+      type,
+      (key ? {..._props, key} : props) as Record<string, string>,
+      children as Element[],
+    );
   }
 }
 

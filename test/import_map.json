@@ -1,0 +1,6 @@
+{
+  "imports": {
+    "jsx4xml": "../mod.ts",
+    "jsx4xml/jsx-runtime": "../jsx-runtime/index.ts"
+  }
+}
