@@ -34,3 +34,11 @@ Deno.test(function escapeAttributes() {
     '<test foo="&apos;&quot;&amp;&lt;&gt;"/>',
   );
 });
+
+Deno.test(function escapeTextNodes() {
+  const v = "'\"&<test>";
+  assertEquals(
+    xml.renderToString(<test>{v}</test>),
+    "<test>&apos;&quot;&amp;&lt;test&gt;</test>",
+  );
+});

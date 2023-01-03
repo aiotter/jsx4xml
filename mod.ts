@@ -30,16 +30,15 @@ class Element {
       return this.children.map((child) => child?.toString() ?? "").join("");
     }
 
+    const escape = (s: string): string =>
+      s.replace(/&/g, "&amp;")
+        .replace(/'/g, "&apos;")
+        .replace(/"/g, "&quot;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+
     let attributesString = Object.entries(this.attributes)
-      .map(([k, v]) => [
-        k,
-        v.replace(/&/g, "&amp;")
-          .replace(/'/g, "&apos;")
-          .replace(/"/g, "&quot;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;"),
-      ])
-      .map(([k, v]) => `${k}="${v}"`)
+      .map(([k, v]) => `${k}="${escape(v)}"`)
       .join(" ");
 
     attributesString = (attributesString.length > 0)
@@ -48,7 +47,9 @@ class Element {
 
     if (this.children.length > 0) {
       return `<${this.elementName}${attributesString}>${
-        this.children.map((child) => child?.toString() ?? "").join("")
+        this.children.map((child) =>
+          typeof child === "string" ? escape(child) : child?.toString() ?? ""
+        ).join("")
       }</${this.elementName}>`;
     } else {
       return `<${this.elementName}${attributesString}/>`;
