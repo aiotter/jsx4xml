@@ -33,9 +33,9 @@ class Element {
     let attributesString = Object.entries(this.attributes)
       .map(([k, v]) => [
         k,
-        v.replace(/'/g, "&apos;")
+        v.replace(/&/g, "&amp;")
+          .replace(/'/g, "&apos;")
           .replace(/"/g, "&quot;")
-          .replace(/&/g, "&amp;")
           .replace(/</g, "&lt;")
           .replace(/>/g, "&gt;"),
       ])
