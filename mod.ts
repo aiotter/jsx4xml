@@ -9,6 +9,14 @@ declare global {
   }
 }
 
+function escape(s: string): string {
+  return s.replace(/&/g, "&amp;")
+    .replace(/'/g, "&apos;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
 class Element {
   elementName: string | typeof fragment;
   attributes: Record<string, string>;
@@ -31,15 +39,7 @@ class Element {
     }
 
     let attributesString = Object.entries(this.attributes)
-      .map(([k, v]) => [
-        k,
-        v.replace(/'/g, "&apos;")
-          .replace(/"/g, "&quot;")
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;"),
-      ])
-      .map(([k, v]) => `${k}="${v}"`)
+      .map(([k, v]) => `${k}="${escape(v)}"`)
       .join(" ");
 
     attributesString = (attributesString.length > 0)
@@ -47,9 +47,10 @@ class Element {
       : "";
 
     if (this.children.length > 0) {
-      return `<${this.elementName}${attributesString}>${
-        this.children.map((child) => child?.toString() ?? "").join("")
-      }</${this.elementName}>`;
+      const value = this.children.map((child) =>
+        typeof child === "string" ? escape(child) : child?.toString() ?? ""
+      ).join("");
+      return `<${this.elementName}${attributesString}>${value}</${this.elementName}>`;
     } else {
       return `<${this.elementName}${attributesString}/>`;
     }
