@@ -1,110 +1,15 @@
-const fragment = Symbol("Flagment");
-const proofOfElement = Symbol("Element");
+import { createElement, JSX } from "./core.ts";
 
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      [elementName: string]: Record<string, string>;
-    }
-  }
-}
+export { Component, createElement, Fragment } from "./core.ts";
+export type { FC, FunctionComponent, JSX } from "./core.ts";
 
-function escape(s: string): string {
-  return s.replace(/&/g, "&amp;")
-    .replace(/'/g, "&apos;")
-    .replace(/"/g, "&quot;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
-}
-
-class Element {
-  elementName: string | typeof fragment;
-  attributes: Record<string, string>;
-  children: (Element | undefined | null)[];
-  [proofOfElement]: true;
-  constructor(
-    elementName: string | typeof fragment,
-    attributes: Record<string, string>,
-    children: Element[],
-  ) {
-    this.elementName = elementName;
-    this.attributes = attributes;
-    this.children = children;
-    this[proofOfElement] = true;
-  }
-
-  toString(): string {
-    if (this.elementName == fragment) {
-      return this.children.map((child) => child?.toString() ?? "").join("");
-    }
-
-    let attributesString = Object.entries(this.attributes)
-      .map(([k, v]) => `${k}="${escape(v)}"`)
-      .join(" ");
-
-    attributesString = (attributesString.length > 0)
-      ? attributesString = " " + attributesString
-      : "";
-
-    if (this.children.length > 0) {
-      const value = this.children.map((child) =>
-        typeof child === "string" ? escape(child) : child?.toString() ?? ""
-      ).join("");
-      return `<${this.elementName}${attributesString}>${value}</${this.elementName}>`;
-    } else {
-      return `<${this.elementName}${attributesString}/>`;
-    }
-  }
-}
-
-// deno-lint-ignore no-explicit-any
-function isElement(element: any): element is Element {
-  return element[proofOfElement] === true;
-}
-
-interface Props {
-  children?: unknown[];
-  [propertyName: string]: unknown;
-}
-
-export type FunctionComponent<T extends Props> = ((props?: T) => Element);
-export type FC<T extends Props> = FunctionComponent<T>;
-
-export interface Component {
-  render(props: Props): Element;
-}
-
-export const Fragment = (
-  { children }: { children: (Element | undefined | null)[] },
-) => createElement(fragment, null, ...children);
-
-export function createElement(
-  type: string | Component | FC<Props> | Element | typeof fragment,
-  props?: Record<string, string> | null,
-  ...children: unknown[]
-): Element {
-  // Children can be nested
-  children = children.flat(Infinity);
-
-  if (typeof type === "function") {
-    return type({ ...props, children });
-  } else if (typeof type === "object") {
-    if (isElement(type)) return type;
-    return type.render({ ...props, children });
-  } else {
-    return new Element(type, props ?? {}, children as Element[]);
-  }
-}
-
-export function renderToString(
-  component: Component | FunctionComponent<Props> | Element,
-) {
-  return createElement(component).toString();
+export function renderToString(element: JSX.Element) {
+  return createElement(element).toString();
 }
 
 export function renderWithDeclaration(
-  component: Component | FunctionComponent<Props> | Element,
-  declaration?: Record<string, string>,
+  element: JSX.Element,
+  declaration?: Record<string, string> | null,
 ) {
   let declarationString;
   if (declaration === null) {
@@ -116,5 +21,5 @@ export function renderWithDeclaration(
       Object.entries(declaration).map(([k, v]) => `${k}="${v}"`).join("") +
       "?>";
   }
-  return declarationString + renderToString(component);
+  return declarationString + renderToString(element);
 }
