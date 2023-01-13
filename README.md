@@ -25,7 +25,7 @@ console.log(React.renderToString(<hello place="world" />));
 
 ### `_`
 
-XML namespaces like `<atom:link>` is currently not supported on Deno.
+XML namespaces like `<atom:link>`, processing instructions, XML declaration is currently not supported on Deno.
 You can use them with `_` utility function.
 
 ```tsx
@@ -36,14 +36,27 @@ console.log(renderToString(<_ _="greeting:hello" place="world" />));
 console.log(renderToString(<_ greeting:hello place="world" />));  // alternative usage
 ```
 
+### `XML`
+
+Shorthand for `(props) => <_ _="?xml" version="1.0" encoding="UTF-8" {...props} />`.
+
+```tsx
+/** @jsx createElement */
+
+import { renderToString, XML } as xml from "https://deno.land/x/jsx4xml/mod.ts";
+console.log(renderToString(<XML />));
+// =>  <?xml version="1.0" encoding="UTF-8"?>
+```
+
 ## Example
 
 ### RSS
 
 ```tsx
-/** @jsx xml.createElement */
+/** @jsx createElement */
+/** @jsxFrag Fragment */
 
-import * as xml from "https://deno.land/x/jsx4xml/mod.ts";
+import { createElement, Fragment, renderToString, XML } from "https://deno.land/x/jsx4xml/mod.ts";
 
 interface Item {
   title: string;
@@ -67,14 +80,16 @@ const Rss = ({ items }: { items: Item[] }) => (
 );
 
 console.log(
-  // Add XML declaration at the beginning
-  xml.renderWithDeclaration(
-    <Rss
-      items={[
-        { title: "title0", link: "https://example.com/posts/0/" },
-        { title: "title1", link: "https://example.com/posts/1/" },
-      ]}
-    />,
+  renderToString(
+    <>
+      <XML />
+      <Rss
+        items={[
+          { title: "title0", link: "https://example.com/posts/0/" },
+          { title: "title1", link: "https://example.com/posts/1/" },
+        ]}
+      />
+    </>
   ),
 );
 ```

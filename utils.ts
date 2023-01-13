@@ -25,3 +25,7 @@ export const _ = <T extends Record<string, string | true>>(
     ...(Array.isArray(children) ? children : [children]),
   );
 };
+
+export const XML = <T extends Record<string, string>>(props: T) => {
+  return _({ _: "?xml", version: "1.0", encoding: "UTF-8", ...props });
+};

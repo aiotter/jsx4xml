@@ -3,7 +3,7 @@ import { createElement, JSX } from "./core.ts";
 export { Component, createElement, Fragment } from "./core.ts";
 export type { FC, FunctionComponent, JSX } from "./core.ts";
 
-export { _ } from "./utils.ts";
+export { _, XML } from "./utils.ts";
 
 export function renderToString(element: JSX.Element) {
   return createElement(element).toString();
