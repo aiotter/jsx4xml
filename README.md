@@ -21,6 +21,20 @@ import * as React from "https://deno.land/x/jsx4xml/mod.ts";
 console.log(React.renderToString(<hello place="world" />));
 ```
 
+## Utility functions
+
+### `_`
+
+XML namespaces like `<atom:link>` is currently not supported on Deno.
+You can use them with `_` utility function.
+
+```tsx
+/** @jsx createElement */
+
+import { createElement, renderToString, _ } as xml from "https://deno.land/x/jsx4xml/mod.ts";
+console.log(renderToString(<_ greeting:hello place="world" />));
+```
+
 ## Example
 
 ### RSS
