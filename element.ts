@@ -11,7 +11,7 @@ export const fragment = Symbol("Flagment");
 
 export class Element {
   elementName: string | typeof fragment;
-  props: Record<string, string>;
+  props: Record<string, string> | Record<string, true>;
   children: (Element | string | undefined | null)[];
   [proofOfElement]: true;
 
@@ -32,7 +32,9 @@ export class Element {
     }
 
     let attributesString = Object.entries(this.props)
-      .map(([k, v]) => `${k}="${escape(v)}"`)
+      .map(([k, v]: [string, string | true]) =>
+        typeof v === "string" ? `${k}="${escape(v)}"` : k
+      )
       .join(" ");
 
     attributesString = (attributesString.length > 0)
@@ -44,6 +46,8 @@ export class Element {
         typeof child === "string" ? escape(child) : child?.toString() ?? ""
       ).join("");
       return `<${this.elementName}${attributesString}>${value}</${this.elementName}>`;
+    } else if (this.elementName.startsWith("?")) {
+      return `<${this.elementName}${attributesString}?>`;
     } else {
       return `<${this.elementName}${attributesString}/>`;
     }

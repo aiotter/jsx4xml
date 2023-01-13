@@ -32,7 +32,8 @@ You can use them with `_` utility function.
 /** @jsx createElement */
 
 import { createElement, renderToString, _ } as xml from "https://deno.land/x/jsx4xml/mod.ts";
-console.log(renderToString(<_ greeting:hello place="world" />));
+console.log(renderToString(<_ _="greeting:hello" place="world" />));
+console.log(renderToString(<_ greeting:hello place="world" />));  // alternative usage
 ```
 
 ## Example

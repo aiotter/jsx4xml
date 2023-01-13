@@ -115,7 +115,11 @@ export function createElement(
     if (tagName.toLowerCase().startsWith("xml")) {
       throw new Error("Tag name starting with 'xml' is against xml spec!");
     }
-    if (props && Object.values(props).some((v) => typeof v !== "string")) {
+    if (
+      props && Object.values(props).some((v) =>
+        typeof v !== "string" && !tagName.startsWith("?")
+      )
+    ) {
       throw new Error("Property value must be strings!");
     }
     return new Element(
