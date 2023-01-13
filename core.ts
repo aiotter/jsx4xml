@@ -130,6 +130,16 @@ export function createElement(
   }
 }
 
+import J = JSX;
+// deno-lint-ignore no-namespace
+export namespace createElement.JSX {
+  export type Element = J.Element;
+  export type ElementAttributesProperty = J.ElementAttributesProperty;
+  export type IntrinsicElements = J.IntrinsicElements;
+  export type ElementClass = J.ElementClass;
+  export type ElementChildrenAttribute = J.ElementClass;
+}
+
 export const Fragment = (
   { children }: { children: Child[] },
 ) => createElement(fragment, null, ...children);
